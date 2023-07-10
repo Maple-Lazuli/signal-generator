@@ -2,3 +2,4 @@ venv/*
 .idea/*
 data_gen/*
 notebooks/*
+src/__pycache__/*
