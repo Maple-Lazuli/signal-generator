@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import numpy as np
 
+
 @dataclass
 class Transmission:
     Fs: int = 1e6
@@ -10,9 +11,12 @@ class Transmission:
 
     def __post_init__(self):
         self.t = np.arange(0, self.T, 1 / self.Fs)
-        self.n_samples = int(self.Td * self.Fs)
-        self.n_sym = int(np.floor(np.size(self.t) / self.n_samples))
-
+        self.n_samples = self.Td * self.Fs
+        try:
+            self.n_sym = int(np.floor(np.size(self.t) / self.n_samples))
+        except:
+            print("Error")
+            print(f"self.Td:{self.Td}, self.Fs:{self.Fs}, n_samples {self.n_samples}")
         self.message = self.gen_message()
 
     def gen_message(self):
@@ -24,8 +28,7 @@ class Transmission:
 
         # generating symbols
         id1 = np.where(rand_n == 1)
-
         for i in id1[0]:
             temp = int(i * self.n_samples)
-            sig[temp:temp + self.n_samples] = 1
+            sig[temp:temp + int(self.n_samples)] = 1
         return sig

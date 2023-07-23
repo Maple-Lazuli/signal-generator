@@ -1,10 +1,9 @@
-import numpy as np
+import dask
+from dask.diagnostics import ProgressBar
 import os
 import shutil
-from generation_utils import annotate, create_signals
-from spectrogram_utils import create_spectrogram
-
 import argparse
+from generation_utils import generate_example
 
 
 def verify_directory(directory, clear):
@@ -20,18 +19,12 @@ def main(flags):
 
     verify_directory(directory, flags.clear_generation_directory)
 
-    for _ in range(flags.quantity):
-        sigs = create_signals(max_signals=max_signals)
+    dask_tasks = [dask.delayed(generate_example)(directory, max_signals,
+                                                 flags.noise_intensity,
+                                                 image_size, flags.sub_labels) for _ in range(flags.quantity)]
 
-        spectrogram = create_spectrogram(sigs + flags.noise_intensity * np.random.randn(len(sigs)), 2 ** 11)
-        spectrogram = np.hsplit(spectrogram, 2)[0]
-
-        spectrogram = ((spectrogram - spectrogram.min()) * (
-                1 / (spectrogram.max() - spectrogram.min()) * 255)).astype('uint8')
-
-        annotate(spectrogram, image_size, directory)
-
-        print(f"{_} of {flags.quantity}")
+    with ProgressBar():
+        dask.compute(*[dask_tasks])
 
 
 if __name__ == "__main__":
@@ -54,7 +47,7 @@ if __name__ == "__main__":
                         help='The directory to store the data in')
 
     parser.add_argument('--quantity', type=int,
-                        default=200,
+                        default=4,
                         help='The number of examples to generate')
 
     parser.add_argument('--clear-generation-directory', type=bool,
@@ -64,6 +57,10 @@ if __name__ == "__main__":
     parser.add_argument('--noise-intensity', type=float,
                         default=0.999,
                         help='The scalar to multiply the noise by')
+
+    parser.add_argument('--sub-labels', type=bool,
+                        default=True,
+                        help='Boolean to indicate whether to create labels for the individual signals in the spectrogram')
 
     parsed_flags, _ = parser.parse_known_args()
 
