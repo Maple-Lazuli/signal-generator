@@ -13,13 +13,13 @@ class Label(Enum):
 def color(value):
     code = Label(value)
     if code == Label.TRANSMISSION:
-        return "plum"
-    elif code == Label.ASK:
         return "red"
+    elif code == Label.ASK:
+        return "black"
     elif code == Label.PSK:
         return "green"
     elif code == Label.FSK:
-        return "cornflowerblue"
+        return "blue"
     elif code == Label.MFSK:
         return "cyan"
     elif code == Label.TONE:
