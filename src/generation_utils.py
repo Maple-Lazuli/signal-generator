@@ -52,7 +52,7 @@ def create_notcher(size):
 def generate_signal():
     mod = Modulator()
 
-    rate = 1 / 10 ** random.randint(1, 8)
+    rate = 1 / 10 ** random.randint(1, 6)
 
     center = random.randint(130, 265) * 1000
 

@@ -11,7 +11,7 @@ class Transmission:
 
     def __post_init__(self):
         self.t = np.arange(0, self.T, 1 / self.Fs)
-        self.n_samples = self.Td * self.Fs
+        self.n_samples = int(self.Td * self.Fs) if int(self.Td * self.Fs) != 0 else 1
         try:
             self.n_sym = int(np.floor(np.size(self.t) / self.n_samples))
         except:
@@ -30,5 +30,5 @@ class Transmission:
         id1 = np.where(rand_n == 1)
         for i in id1[0]:
             temp = int(i * self.n_samples)
-            sig[temp:temp + int(self.n_samples)] = 1
+            sig[temp:temp + self.n_samples] = 1
         return sig
