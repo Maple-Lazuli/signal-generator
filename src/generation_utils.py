@@ -112,7 +112,7 @@ def annotate_spectrogram(spectrogram, label):
             ends = []
             for idx in range(vertical_start, vertical_end + 1):
                 count = 0
-                for val in np.flip(s_map, 1)[idx,]:
+                for val in s_map[idx,][::-1]:
                     if val != 0:
                         break
                     count += 1
