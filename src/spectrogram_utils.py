@@ -7,7 +7,7 @@ def create_spectrogram(signal, fft_size):
     spectrogram = np.zeros((num_rows, fft_size))
     for i in range(num_rows):
         spectrogram[i,:] = np.log10(np.abs(np.fft.fftshift(np.fft.fft(signal[i*fft_size:(i+1)*fft_size])))**2)
-    return spectrogram
+    return spectrogram.astype('float16')
 
 
 def plot_spectrogram(spectrogram, sample_rate, sig, MHz=False):
