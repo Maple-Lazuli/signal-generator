@@ -47,7 +47,7 @@ if __name__ == "__main__":
                         help='The directory to store the data in')
 
     parser.add_argument('--quantity', type=int,
-                        default=4,
+                        default=1000,
                         help='The number of examples to generate')
 
     parser.add_argument('--clear-generation-directory', type=bool,
@@ -59,7 +59,7 @@ if __name__ == "__main__":
                         help='The scalar to multiply the noise by')
 
     parser.add_argument('--sub-labels', type=bool,
-                        default=True,
+                        default=False,
                         help='Boolean to indicate whether to create labels for the individual signals in the spectrogram')
 
     parsed_flags, _ = parser.parse_known_args()
