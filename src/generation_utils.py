@@ -188,14 +188,13 @@ def annotate(env, signals, modulations, image_size, save_directory):
     im = im.resize((new_width, new_height), Image.Resampling.LANCZOS)
     save_name = create_name()
     im.save(os.path.join(save_directory, f"{save_name}.jpg"))
-    im.save(os.path.join(save_directory, f"{save_name}.png"), "PNG")
 
     # Create a jpg with the annotation bounding boxes
     im_draw = ImageDraw.Draw(im)
     for scaled in annotations:
         # scaled = rescale_annotation(an, (new_height, new_width))
         im_draw.rectangle((scaled['x_0'], scaled['y_0'], scaled['x_1'], scaled['y_1']), outline=color(scaled['label']))
-    im.save(os.path.join(save_directory, f"{save_name}_annotated.png"), "PNG")
+    im.save(os.path.join(save_directory, f"{save_name}_annotated.jpg"))
 
     # Save the spectrogram
     with open(os.path.join(save_directory, f"{save_name}.json"), "w") as fout:
