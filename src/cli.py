@@ -19,12 +19,15 @@ def main(flags):
 
     verify_directory(directory, flags.clear_generation_directory)
 
-    dask_tasks = [dask.delayed(generate_example)(directory, max_signals,
-                                                 flags.noise_intensity,
-                                                 image_size, flags.sub_labels) for _ in range(flags.quantity)]
-
-    with ProgressBar():
-        dask.compute(*[dask_tasks])
+    if flags.use_dask:
+        dask_tasks = [dask.delayed(generate_example)(directory, max_signals,
+                                                     flags.noise_intensity,
+                                                     image_size, flags.sub_labels) for _ in range(flags.quantity)]
+        with ProgressBar():
+            dask.compute(*[dask_tasks])
+    else:
+        for _ in range(flags.quantity):
+            generate_example(directory, max_signals, flags.noise_intensity, image_size, flags.sub_labels)
 
 
 if __name__ == "__main__":
@@ -61,6 +64,12 @@ if __name__ == "__main__":
     parser.add_argument('--sub-labels', type=bool,
                         default=False,
                         help='Boolean to indicate whether to create labels for the individual signals in the spectrogram')
+
+    parser.add_argument('--use-dask', type=bool,
+                        default=False,
+                        help='Boolean to indicate whether to use dask for parallel processing')
+
+
 
     parsed_flags, _ = parser.parse_known_args()
 
