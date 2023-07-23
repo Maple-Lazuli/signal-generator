@@ -29,6 +29,8 @@ def main(flags):
         for _ in range(flags.quantity):
             generate_example(directory, max_signals, flags.noise_intensity, image_size, flags.sub_labels)
 
+            print(f"Finished {_} of {flags.quantity}")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -68,8 +70,6 @@ if __name__ == "__main__":
     parser.add_argument('--use-dask', type=bool,
                         default=False,
                         help='Boolean to indicate whether to use dask for parallel processing')
-
-
 
     parsed_flags, _ = parser.parse_known_args()
 
