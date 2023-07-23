@@ -207,7 +207,7 @@ def create_name():
     return hasher.hexdigest()
 
 
-def create_signals(max_signals):
+def create_signals(max_signals, store_signals):
     num_signals = random.randint(1, max_signals)
 
     sigs = []
@@ -219,43 +219,42 @@ def create_signals(max_signals):
         sig *= notcher
         env = np.copy(sig)
 
-        sigs.append(sig)
-        mods.append(mod)
+        if store_signals:
+            sigs.append(sig)
+            mods.append(mod)
 
         for idx in range(1, num_signals):
             sig, mod, rate = generate_signal()
             sig *= notcher
             env += sig
 
-            sigs.append(sig)
-            mods.append(mod)
+            if store_signals:
+                sigs.append(sig)
+                mods.append(mod)
         return env, sigs, mods
     else:
         sig, mod, rate = generate_signal()
         sig *= create_notcher(len(sig))
         env = np.copy(sig)
 
-        sigs.append(sig)
-        mods.append(mod)
+        if store_signals:
+            sigs.append(sig)
+            mods.append(mod)
 
         for idx in range(1, num_signals):
             sig, mod, rate = generate_signal()
             sig *= create_notcher(len(sig))
             env += sig
 
-            sigs.append(sig)
-            mods.append(mod)
+            if store_signals:
+                sigs.append(sig)
+                mods.append(mod)
         return env, sigs, mods
 
 
 def generate_example(directory, max_signals, noise_intensity, image_size, sub_labels):
-    env, sigs, mods = create_signals(max_signals=max_signals)
+    env, sigs, mods = create_signals(max_signals=max_signals, store_signals=sub_labels)
 
     env = prepare_spectrogram(signal=env, noise_intensity=noise_intensity)
-    if sub_labels:
-        sigs = [prepare_spectrogram(signal=sig, noise_intensity=noise_intensity) for sig in sigs]
-    else:
-        sigs = []
-        mods = []
 
     annotate(env=env, signals=sigs, modulations=mods, image_size=image_size, save_directory=directory)
