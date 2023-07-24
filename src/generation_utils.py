@@ -256,5 +256,6 @@ def generate_example(directory, max_signals, noise_intensity, image_size, sub_la
     env, sigs, mods = create_signals(max_signals=max_signals, store_signals=sub_labels)
 
     env = prepare_spectrogram(signal=env, noise_intensity=noise_intensity)
+    sigs = [prepare_spectrogram(signal=sig, noise_intensity=noise_intensity) for sig in sigs]
 
     annotate(env=env, signals=sigs, modulations=mods, image_size=image_size, save_directory=directory)
