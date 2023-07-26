@@ -68,7 +68,7 @@ if __name__ == "__main__":
                         help='Boolean to indicate whether to create labels for the individual signals in the spectrogram')
 
     parser.add_argument('--use-dask', type=bool,
-                        default=False,
+                        default=True,
                         help='Boolean to indicate whether to use dask for parallel processing')
 
     parsed_flags, _ = parser.parse_known_args()
