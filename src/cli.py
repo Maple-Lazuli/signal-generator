@@ -6,28 +6,34 @@ import argparse
 from generation_utils import generate_example
 
 
-def verify_directory(directory, clear):
-    if os.path.exists(directory) and clear:
-        shutil.rmtree(directory)
-    os.makedirs(directory)
+def verify_directory(directory, clear_dir=False):
+    if os.path.exists(directory):
+        if clear_dir:
+            shutil.rmtree(directory)
+            os.makedirs(directory)
+    else:
+        os.makedirs(directory)
 
 
 def main(flags):
+    print(flags)
     max_signals = flags.max_signals
     image_size = flags.image_height, flags.image_width
     directory = flags.generation_directory
 
-    verify_directory(directory, flags.clear_generation_directory)
+    verify_directory(directory)
 
     if flags.use_dask:
         dask_tasks = [dask.delayed(generate_example)(directory, max_signals,
                                                      flags.noise_intensity,
-                                                     image_size, flags.sub_labels) for _ in range(flags.quantity)]
+                                                     image_size, flags.sub_labels,
+                                                     flags.threshold) for _ in range(flags.quantity)]
         with ProgressBar():
             dask.compute(*[dask_tasks])
     else:
         for _ in range(flags.quantity):
-            generate_example(directory=directory, max_signals=max_signals, noise_intensity=flags.noise_intensity, image_size=image_size, sub_labels=flags.sub_labels, threshold=flags.threshold)
+            generate_example(directory=directory, max_signals=max_signals, noise_intensity=flags.noise_intensity,
+                             image_size=image_size, sub_labels=flags.sub_labels, threshold=flags.threshold)
 
             print(f"Finished {_} of {flags.quantity}")
 
@@ -36,7 +42,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
     parser.add_argument('--max-signals', type=int,
-                        default=40,
+                        default=20,
                         help='The number of signals to generate in each spectrogram')
 
     parser.add_argument('--image-height', type=int,
@@ -55,8 +61,8 @@ if __name__ == "__main__":
                         default=1000,
                         help='The number of examples to generate')
 
-    parser.add_argument('--clear-generation-directory', type=bool,
-                        default=True,
+    parser.add_argument('--clear', type=bool,
+                        default=False,
                         help='Boolean to indicate whether to clear the generation directory before use.')
 
     parser.add_argument('--noise-intensity', type=float,
@@ -68,11 +74,11 @@ if __name__ == "__main__":
                         help='Boolean to indicate whether to create labels for the individual signals in the spectrogram')
 
     parser.add_argument('--use-dask', type=bool,
-                        default=True,
+                        default=False,
                         help='Boolean to indicate whether to use dask for parallel processing')
 
     parser.add_argument('--threshold', type=bool,
-                        default=True,
+                        default=False,
                         help='Boolean to indicate whether to threshold spectrograms')
 
     parsed_flags, _ = parser.parse_known_args()
