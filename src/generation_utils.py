@@ -183,7 +183,6 @@ def annotate(env, signals, modulations, image_size, save_directory, threshold=Fa
     annotations = [rescale_annotation(a, (new_height, new_width)) for a in annotations]
 
     if threshold:
-        print("thresholded")
         env *= env > env.mean() + env.std() * 3
 
     # Create a jpg of the spectrogram
