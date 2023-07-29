@@ -166,7 +166,7 @@ def rescale_annotation(annotation, shape):
     }
 
 
-def annotate(env, signals, modulations, image_size, save_directory):
+def annotate(env, signals, modulations, image_size, save_directory, threshold=False):
     new_height = image_size[0]
     new_width = image_size[1]
 
@@ -184,6 +184,10 @@ def annotate(env, signals, modulations, image_size, save_directory):
 
     # Create a jpg of the spectrogram
     env = (env - env.min()) / (env.max() - env.min())
+
+    if threshold:
+        env = env > env.mean() + env.std() * 2
+
     im = Image.fromarray(env * 255).convert('L').convert("RGB")
     im = im.resize((new_width, new_height), Image.Resampling.LANCZOS)
     save_name = create_name()
@@ -208,7 +212,7 @@ def create_name():
 
 
 def create_signals(max_signals, store_signals):
-    num_signals = random.randint(1, max_signals)
+    num_signals = random.randint(0, max_signals)
 
     sigs = []
     mods = []
@@ -252,10 +256,11 @@ def create_signals(max_signals, store_signals):
         return env, sigs, mods
 
 
-def generate_example(directory, max_signals, noise_intensity, image_size, sub_labels):
+def generate_example(directory, max_signals, noise_intensity, image_size, sub_labels, threshold=False):
     env, sigs, mods = create_signals(max_signals=max_signals, store_signals=sub_labels)
 
     env = prepare_spectrogram(signal=env, noise_intensity=noise_intensity)
+
     sigs = [prepare_spectrogram(signal=sig, noise_intensity=noise_intensity) for sig in sigs]
 
-    annotate(env=env, signals=sigs, modulations=mods, image_size=image_size, save_directory=directory)
+    annotate(env=env, signals=sigs, modulations=mods, image_size=image_size, save_directory=directory, threshold=threshold)

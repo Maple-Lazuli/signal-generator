@@ -71,6 +71,10 @@ if __name__ == "__main__":
                         default=True,
                         help='Boolean to indicate whether to use dask for parallel processing')
 
+    parser.add_argument('--threshold', type=bool,
+                        default=True,
+                        help='Boolean to indicate whether to threshold spectrograms')
+
     parsed_flags, _ = parser.parse_known_args()
 
     main(parsed_flags)
