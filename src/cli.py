@@ -27,7 +27,7 @@ def main(flags):
             dask.compute(*[dask_tasks])
     else:
         for _ in range(flags.quantity):
-            generate_example(directory, max_signals, flags.noise_intensity, image_size, flags.sub_labels)
+            generate_example(directory=directory, max_signals=max_signals, noise_intensity=flags.noise_intensity, image_size=image_size, sub_labels=flags.sub_labels, threshold=flags.threshold)
 
             print(f"Finished {_} of {flags.quantity}")
 
